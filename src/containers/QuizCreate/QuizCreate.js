@@ -5,6 +5,7 @@ import Input from '../../components/UI/input/input'
 import {createControl, validate, validateForm} from '../../form/formFramework'
 import Select from '../../components/UI/Select/Select'
 import Auxiliary from '../../hoc/Auxiliary/Auxiliary'
+import axios from '../../axios/axios-quiz'
 
 function createOptionControl(number){
     return createControl({
@@ -22,7 +23,7 @@ function createFormControls() {
             label: 'Введите вопрос',
             errorMessage: 'Вопрос не может быть пустым'
         }, {
-            requaired: true
+            reqaired: true
         }),
         option1: createOptionControl(1),
         option2: createOptionControl(2),
@@ -40,8 +41,53 @@ export default class QuizCreate extends Component {
         formControls: createFormControls()
     }
 
+    
     submitHandler = event => {
         event.preventDefault()
+    }
+
+    addQuestionHandler = event => {
+        event.preventDefault()
+
+        const quiz = this.state.quiz.concat()
+        const index = quiz.length + 1
+        const {question, option1, option2, option3, option4} = this.state.formControls
+
+        const questionItem = {
+            question: question.value,
+            id: index, 
+            rightAnswerId: this.state.rightAnswerId,
+            answers: [
+                {text: option1.value, id: option1.id},
+                {text: option2.value, id: option2.id},
+                {text: option3.value, id: option3.id},
+                {text: option4.value, id: option4.id}
+            ]
+        }
+        quiz.push(questionItem)
+        this.setState({
+            quiz, 
+            isFormValid: false,
+            rightAnswerId: 1,
+            formControls: createFormControls()
+        })
+    }
+
+    createQuizHandler = async event => {
+        event.preventDefault()
+
+        try {
+            await axios.post('/quizes.json', this.state.quiz)
+            
+            this.setState({
+                quiz: [],
+                isFormValid: false,
+                rightAnswerId: 1,
+                formControls: createFormControls()
+            })
+        } catch(e) {
+            console.log(e)
+        }
     }
 
     changeHandler = (value, controlName) => {
@@ -110,10 +156,12 @@ const select = <Select
                         <Button
                             type="primary"
                             onClick={this.addQuestionHandler}
+                            disabled={!this.state.isFormValid}
                             >Добавить вопрос</Button>
                         <Button
                             type="success"
                             onClick={this.createQuizHandler}
+                            disabled = {!this.state.quiz.length === 0}
                             >Создать тест</Button>
 
                     </form>
