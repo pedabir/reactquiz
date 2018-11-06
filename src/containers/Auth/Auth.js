@@ -3,6 +3,7 @@ import classes from './Auth.css'
 import Button from '../../components/UI/Button/Button'
 import Input from '../../components/UI/input/input'
 import is from 'is_js'
+import axios from 'axios'
 
 export default class Auth extends Component {
 
@@ -35,10 +36,33 @@ export default class Auth extends Component {
             }
         }
     }
+    loginHandler = async () => {
+        const authData = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value,
+            returnSecureToken: true
+        }
+        try {
+            const response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBWuWPlp2O8j7S3xBwZAo10iTGikyktChw', authData)
+            console.log(response.data)
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
-    // loginHandler = () => {
-
-    // },
+    registerHandler = async () => {
+        const authData = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value, 
+            returnSecureToken: true
+        }
+        try {
+            const response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyBWuWPlp2O8j7S3xBwZAo10iTGikyktChw', authData)
+            console.log(response.data)
+        } catch (e) {
+            console.log(e)
+        }
+    }
     validateControl(value, validation) {
         if (!validation) {
             return true
@@ -113,7 +137,7 @@ export default class Auth extends Component {
                         <Button 
                         type="primary" 
                         onClick={this.registerHandler}
-                        disabled = {!this.state.isFormValid                        }
+                        disabled = {!this.state.isFormValid}
                         >Зарегистрироваться</Button>
                     </form>
                 </div>

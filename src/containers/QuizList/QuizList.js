@@ -1,9 +1,8 @@
 import React, {Component} from 'react'
 import classes from './QuizList.css'
 import {NavLink} from 'react-router-dom'
-import axios from '../../axios/axios-quiz'
 import Loader from '../../components/UI/Loader/Loader'
-
+import axios from '../../axios/axios-quiz'
 
 export default class QuizList extends Component {
 
@@ -34,11 +33,11 @@ export default class QuizList extends Component {
             Object.keys(response.data).forEach((key, index) => {
                 quizes.push({
                     id: key, 
-                    name: `Тест№${index + 1}`
+                    name: `Тест №${index + 1}`
                 })
             })
             this.setState({
-                loading: true
+               quizes, loading: false
             })
         } catch (e) {
             console.log(e)
